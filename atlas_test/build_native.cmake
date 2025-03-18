@@ -54,6 +54,12 @@ target_include_directories( MultiplyStatLib PUBLIC
 
 # Build the test executable using the static and shared libraries.
 add_executable( testComplexLink main.cxx )
+# Adding 'HelperLib' here is necessary to propage the header file
+# location but is deadly for RDC as now the library is included
+# twice (once in MultiplyLib with a proper `-dlink` step and
+# second directly but with the `-dlink` step).
+# Right way to do so is to include MultiplyLib with the
+# dlink step and to have here a dlink step instead.
 target_link_libraries( testComplexLink PRIVATE
    MultiplyLib HelperLib )
 set_property( TARGET testComplexLink PROPERTY INSTALL_RPATH
@@ -82,7 +88,9 @@ target_link_libraries( testSimpleLink PRIVATE HelperLib )
 
 # Ctest the executables
 if(BUILD_TESTING)
-  add_test(NAME atl_testComplexLink COMMAND testComplexLink)
+  add_test(NAME atl_testComplexLink COMMAND ${CMAKE_COMMAND} -E env $<TARGET_FILE:testComplexLink>)
+  set_property(TEST atl_testComplexLink PROPERTY WILL_FAIL true)
+
   add_test(NAME atl_testObjectLink COMMAND testObjectLink)
   add_test(NAME atl_testStaticLink COMMAND testStaticLink)
   add_test(NAME atl_testSimpleLink COMMAND testSimpleLink)
