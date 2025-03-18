@@ -122,7 +122,7 @@ relocatable device code and most importantly linking against those libraries.
 
 #]=======================================================================]
 
-set(_CUDA_RDC_VERSION 1)
+set(_CUDA_RDC_VERSION 2)
 if(CUDA_RDC_VERSION GREATER _CUDA_RDC_VERSION)
   # A newer version has already been loaded
   return()
